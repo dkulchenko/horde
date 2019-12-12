@@ -411,8 +411,14 @@ defmodule Horde.DynamicSupervisorImpl do
               # handle_dead_nodes
               case current_member do
                 %{status: :dead} ->
-                  {{:ok, _}, state} = add_child(child, state)
-                  state
+                  add_child(child, state)
+                  |> case do
+                    {{:ok, _}, state} ->
+                      state
+
+                    {:ignore, state} ->
+                      state
+                  end
 
                 _ ->
                   state
